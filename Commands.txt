@@ -1,0 +1,35 @@
+E:\agentic-mcp-gateway\venv\Scripts\activate
+cd E:\agentic-mcp-gateway\mock-services\jira
+python app.py
+
+E:\agentic-mcp-gateway\venv\Scripts\activate
+cd E:\agentic-mcp-gateway\mock-services\github
+python app.py
+
+E:\agentic-mcp-gateway\venv\Scripts\activate
+cd E:\agentic-mcp-gateway\mock-services\slack
+python app.py
+
+E:\agentic-mcp-gateway\venv\Scripts\activate
+cd E:\agentic-mcp-gateway\mock-services\sheets
+python app.py
+
+cd E:\agentic-mcp-gateway\backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+cd E:\agentic-mcp-gateway\backend
+E:\agentic-mcp-gateway\venv\Scripts\activate
+python test_orchestrator.py
+
+Invoke-WebRequest -Uri "http://localhost:8000/api/v1/workflow/execute" -Method POST -Headers @{"X-API-Key"="hackathon-demo-key-2025"; "Content-Type"="application/json"} -Body '{"command": "Critical bug BUG-421 filed in Jira — handle end to end"}' | Select-Object -ExpandProperty Content
+
+
+
+Phase 6
+cd E:\agentic-mcp-gateway\backend
+E:\agentic-mcp-gateway\venv\Scripts\activate
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+
+
+Phase 7
