@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from connectors.base import BaseConnector
 from loguru import logger
 
@@ -49,7 +51,7 @@ class SheetsConnector(BaseConnector):
         # or passing headers (BaseConnector wouldn't normally pass headers per-request, 
         # but we can update BaseConnector get/post to accept **kwargs). 
         # To avoid BaseConnector changes, we can manually do it:
-        url = f"{self.base_url}/v4/spreadsheets/{self.default_sheet}/values/A:D:append?valueInputOption=USER_ENTERED"
+        url = f"{self.base_url}/v4/spreadsheets/{self.default_sheet}/values/A1:append?valueInputOption=USER_ENTERED"
         try:
             response = await self.client.post(url, json=data, headers=headers)
             response.raise_for_status()

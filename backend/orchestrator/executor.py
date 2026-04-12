@@ -112,6 +112,10 @@ class WorkflowExecutor:
                 # Call the connector tool with resolved parameters
                 output = await tool_func(**parameters)
 
+                # Check if connector returned an error dict
+                if isinstance(output, dict) and "error" in output:
+                    raise Exception(f"Connector error: {output['error']}")
+
                 # Update context with key data from this step
                 self._update_context(step_id, tool_name, output, context)
 
@@ -148,9 +152,16 @@ class WorkflowExecutor:
         This is what makes data flow between steps.
         """
         if "jira" in tool_name and "get" in tool_name:
-            context.ticket_id = output.get("id", context.ticket_id)
-            context.ticket_title = output.get("title", context.ticket_title)
-            context.ticket_priority = output.get("priority", context.ticket_priority)
+            if "fields" in output:
+                # Real Jira API response
+                context.ticket_id = output.get("key", context.ticket_id)
+                context.ticket_title = output.get("fields", {}).get("summary", context.ticket_title)
+                context.ticket_priority = output.get("fields", {}).get("priority", {}).get("name", context.ticket_priority)
+            else:
+                # Mock response (flat)
+                context.ticket_id = output.get("id", context.ticket_id)
+                context.ticket_title = output.get("title", context.ticket_title)
+                context.ticket_priority = output.get("priority", context.ticket_priority)
 
         elif "github_create_branch" in tool_name:
             context.branch_name = output.get("name", context.branch_name)
@@ -160,7 +171,9 @@ class WorkflowExecutor:
             context.slack_notified = output.get("ok", False)
 
         elif "sheets_log" in tool_name:
-            context.sheet_logged = output.get("updatedRows", 0) > 0
+            updates = output.get("updates", {})
+            updated_rows = updates.get("updatedRows", output.get("updatedRows", 0))
+            context.sheet_logged = updated_rows > 0
 
     async def request_approval(self, step_id: str, tool_name: str, parameters: Dict) -> bool:
         """

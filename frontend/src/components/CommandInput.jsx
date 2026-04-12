@@ -28,19 +28,13 @@ export default function CommandInput({ onWorkflowStarted }) {
   }
 
   return (
-    <div style={{
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(79,70,229,0.3)',
-      borderRadius: '16px',
-      padding: '28px',
-      marginBottom: '24px'
-    }}>
+    <div className="card" style={{ padding: '28px', marginBottom: '24px' }}>
       {/* Title */}
       <div style={{ marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#fff' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>
           🧠 Natural Language Command
         </h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-sec)', marginTop: '4px' }}>
           Type any workflow in plain English — the AI will plan and execute it automatically
         </p>
       </div>
@@ -54,20 +48,24 @@ export default function CommandInput({ onWorkflowStarted }) {
           placeholder="e.g. Critical bug BUG-421 filed — handle end to end..."
           style={{
             flex: 1,
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(79,70,229,0.4)',
+            background: '#F9FAFB',
+            border: '1px solid #D1D5DB',
             borderRadius: '10px',
             padding: '14px 18px',
-            color: '#fff',
+            color: 'var(--text-main)',
             fontSize: '14px',
             outline: 'none',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
+            transition: 'border-color 0.2s',
           }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+          onBlur={(e) => e.target.style.borderColor = '#D1D5DB'}
         />
         <button
           onClick={handleExecute}
           disabled={loading || !command.trim()}
           style={{
-            background: loading ? '#374151' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+            background: loading ? '#9CA3AF' : 'var(--primary)',
             border: 'none',
             borderRadius: '10px',
             padding: '14px 28px',
@@ -76,7 +74,14 @@ export default function CommandInput({ onWorkflowStarted }) {
             fontSize: '14px',
             cursor: loading ? 'not-allowed' : 'pointer',
             whiteSpace: 'nowrap',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            boxShadow: loading ? 'none' : '0 4px 6px -1px rgba(37, 99, 235, 0.2)'
+          }}
+          onMouseOver={(e) => { 
+            if (!loading && command.trim()) e.target.style.background = 'var(--primary-hover)'
+          }}
+          onMouseOut={(e) => {
+            if (!loading && command.trim()) e.target.style.background = 'var(--primary)'
           }}
         >
           {loading ? '⏳ Planning...' : '🚀 Execute'}
@@ -86,13 +91,14 @@ export default function CommandInput({ onWorkflowStarted }) {
       {/* Error */}
       {error && (
         <div style={{
-          background: 'rgba(239,68,68,0.1)',
-          border: '1px solid rgba(239,68,68,0.3)',
+          background: '#FEF2F2',
+          border: '1px solid #FCA5A5',
           borderRadius: '8px',
-          padding: '10px 14px',
-          color: '#ef4444',
+          padding: '12px 16px',
+          color: 'var(--error)',
           fontSize: '13px',
-          marginBottom: '12px'
+          marginBottom: '16px',
+          fontWeight: 500
         }}>
           ❌ {error}
         </div>
@@ -100,7 +106,7 @@ export default function CommandInput({ onWorkflowStarted }) {
 
       {/* Example commands */}
       <div>
-        <div style={{ fontSize: '12px', color: '#475569', marginBottom: '8px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-sec)', marginBottom: '8px', fontWeight: 500 }}>
           Try these examples:
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -109,14 +115,18 @@ export default function CommandInput({ onWorkflowStarted }) {
               key={i}
               onClick={() => setCommand(cmd)}
               style={{
-                background: 'rgba(79,70,229,0.1)',
-                border: '1px solid rgba(79,70,229,0.3)',
+                background: '#EFF6FF',
+                border: '1px solid #BFDBFE',
                 borderRadius: '6px',
-                padding: '6px 12px',
-                color: '#818cf8',
+                padding: '8px 14px',
+                color: 'var(--primary)',
                 fontSize: '12px',
+                fontWeight: 500,
                 cursor: 'pointer',
+                transition: 'all 0.2s'
               }}
+              onMouseOver={(e) => e.target.style.background = '#DBEAFE'}
+              onMouseOut={(e) => e.target.style.background = '#EFF6FF'}
             >
               {cmd.length > 50 ? cmd.substring(0, 50) + '...' : cmd}
             </button>

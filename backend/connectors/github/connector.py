@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from connectors.base import BaseConnector
 from loguru import logger
 
@@ -31,11 +33,25 @@ class GitHubConnector(BaseConnector):
         Example: feature/BUG-421-payment-timeout
         """
         logger.info(f"[GitHub] Creating branch: {branch_name}")
+        
+        # First get the SHA of main branch
+        ref_data = await self.get(f"/repos/{self.owner}/{self.repo}/git/ref/heads/main")
+        sha = ref_data.get("object", {}).get("sha", "")
+        if not sha:
+            return {"error": "Could not get main branch SHA", "name": branch_name}
+            
         result = await self.post(
             f"/repos/{self.owner}/{self.repo}/git/refs",
-            {"ref": f"refs/heads/{branch_name}"}
+            {"ref": f"refs/heads/{branch_name}", "sha": sha}
         )
-        return result
+        
+        # Normalize response to match what executor expects
+        return {
+            "name": branch_name,
+            "url": f"https://github.com/{self.owner}/{self.repo}/tree/{branch_name}",
+            "sha": sha,
+            "ref": result.get("ref", "")
+        }
 
     # ── TOOL 2 ──────────────────────────────────────────────
     async def list_branches(self) -> dict:

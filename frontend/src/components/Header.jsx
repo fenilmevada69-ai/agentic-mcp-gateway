@@ -12,30 +12,32 @@ export default function Header() {
 
   return (
     <header style={{
-      background: 'rgba(15, 15, 30, 0.95)',
-      borderBottom: '1px solid rgba(79, 70, 229, 0.3)',
+      background: 'var(--bg-card)',
+      borderBottom: '1px solid var(--border)',
       padding: '16px 32px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       position: 'sticky',
       top: 0,
-      zIndex: 100
+      zIndex: 100,
     }}>
       {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
           width: '40px', height: '40px',
-          background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+          background: 'var(--primary)',
           borderRadius: '10px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '20px'
+          fontSize: '20px',
+          color: '#fff',
+          boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.2)'
         }}>⚡</div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: '18px', color: '#fff' }}>
+          <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-main)' }}>
             Agentic MCP Gateway
           </div>
-          <div style={{ fontSize: '12px', color: '#6366f1' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-sec)' }}>
             AI-Powered Workflow Orchestration
           </div>
         </div>
@@ -46,22 +48,23 @@ export default function Header() {
         <div style={{
           width: '8px', height: '8px',
           borderRadius: '50%',
-          background: healthy ? '#10b981' : '#ef4444',
-          boxShadow: healthy ? '0 0 8px #10b981' : '0 0 8px #ef4444'
+          background: healthy ? 'var(--success)' : 'var(--error)',
+          boxShadow: healthy ? '0 0 6px var(--success)' : '0 0 6px var(--error)'
         }} />
-        <span style={{ fontSize: '13px', color: healthy ? '#10b981' : '#ef4444' }}>
+        <span style={{ fontSize: '13px', fontWeight: 500, color: healthy ? 'var(--success)' : 'var(--error)' }}>
           {healthy ? 'All Systems Operational' : 'Backend Offline'}
         </span>
       </div>
 
       {/* MCP Badge */}
       <div style={{
-        background: 'rgba(79, 70, 229, 0.2)',
-        border: '1px solid rgba(79, 70, 229, 0.4)',
+        background: '#EFF6FF',
+        border: '1px solid #BFDBFE',
         borderRadius: '20px',
         padding: '6px 16px',
         fontSize: '12px',
-        color: '#818cf8'
+        fontWeight: 600,
+        color: 'var(--primary)'
       }}>
         4 MCP Connectors Active
       </div>

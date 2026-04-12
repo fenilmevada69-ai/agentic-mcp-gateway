@@ -10,4 +10,5 @@ httpx
 python-dotenv
 loguru
 flask
+requests
 google-auth

@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from connectors.base import BaseConnector
 from loguru import logger
 
@@ -51,7 +53,7 @@ class SlackConnector(BaseConnector):
         )
         logger.info(f"[Slack] Sending incident alert for {ticket_id}")
         result = await self.post("/api/chat.postMessage", {
-            "channel": "oncall",
+            "channel": "#oncall",
             "text": message,
             "username": "MCP Incident Bot"
         })
@@ -61,7 +63,17 @@ class SlackConnector(BaseConnector):
     async def get_channel_messages(self, channel: str) -> dict:
         """Get recent messages from a channel"""
         logger.info(f"[Slack] Getting messages from #{channel}")
-        result = await self.get("/api/conversations.history", params={"channel": channel})
+        channel_name = channel.replace("#", "")
+        
+        list_res = await self.list_channels()
+        channel_id = channel # fallback
+        if list_res and "channels" in list_res:
+            for c in list_res["channels"]:
+                if c["name"] == channel_name:
+                    channel_id = c["id"]
+                    break
+                    
+        result = await self.get("/api/conversations.history", params={"channel": channel_id})
         return result
 
     # ── TOOL 4 ──────────────────────────────────────────────
