@@ -12,3 +12,5 @@ loguru
 flask
 requests
 google-auth
+passlib
+bcrypt

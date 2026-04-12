@@ -4,10 +4,26 @@ import axios from 'axios'
 const API = axios.create({
   baseURL: 'http://localhost:8000',
   headers: {
-    'X-API-Key': 'hackathon-demo-key-2025',
     'Content-Type': 'application/json'
   }
 })
+
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('apiKey')
+  if (token) {
+    config.headers['X-API-Key'] = token
+  }
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
+// ── Auth APIs ────────────────────────────────────────────────
+export const registerUser = (username, password) =>
+  API.post('/api/v1/auth/register', { username, password })
+
+export const loginUser = (username, password) =>
+  API.post('/api/v1/auth/login', { username, password })
 
 // ── Workflow APIs ────────────────────────────────────────────
 export const executeWorkflow = (command) =>

@@ -4,7 +4,7 @@ import CommandInput from './CommandInput'
 import WorkflowStatus from './WorkflowStatus'
 import ServicesPanel from './ServicesPanel'
 
-export default function Dashboard() {
+export default function Dashboard({ onLogout }) {
   const [workflows, setWorkflows] = useState([])
 
   const handleWorkflowStarted = (workflowId, command) => {
@@ -13,7 +13,7 @@ export default function Dashboard() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)' }}>
-      <Header />
+      <Header onLogout={onLogout} />
 
       <div style={{
         maxWidth: '1400px',

@@ -15,8 +15,9 @@ from api.workflow_manager import (
     approve_workflow_step,
     get_pending_approvals
 )
-from security.auth import verify_api_key
+from security.auth import verify_api_key, get_password_hash, verify_password, generate_api_key
 from security.audit import log_audit, get_audit_log
+from security.db import add_user, get_user_by_username
 from connectors.jira.connector import JiraConnector
 from connectors.github.connector import GitHubConnector
 from connectors.slack.connector import SlackConnector
@@ -42,7 +43,7 @@ app = FastAPI(
 # ── CORS — allows React frontend to talk to this API ─────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,6 +59,10 @@ class WorkflowRequest(BaseModel):
                 "command": "Critical bug BUG-421 filed in Jira — handle end to end"
             }
         }
+
+class UserAuth(BaseModel):
+    username: str
+    password: str
 
 class ApprovalRequest(BaseModel):
     approved: bool
@@ -174,8 +179,51 @@ async def approve_step(
     }
 
 # ════════════════════════════════════════════════════════════
-# DIRECT SERVICE ENDPOINTS (for demo purposes)
+# USER AUTHENTICATION ENDPOINTS
 # ════════════════════════════════════════════════════════════
+
+@app.post("/api/v1/auth/register", tags=["Auth"])
+async def register_user(user: UserAuth):
+    """
+    📝 Register a new user and generate a unique API key.
+    """
+    logger.info(f"[Auth] Registering new user: {user.username}")
+    
+    # Hash password & generate unique key
+    hashed_pwd = get_password_hash(user.password)
+    new_api_key = generate_api_key()
+    
+    # Save to database
+    success = add_user(user.username, hashed_pwd, new_api_key)
+    if not success:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    return {
+        "success": True,
+        "username": user.username,
+        "api_key": new_api_key,
+        "message": "User registered successfully! Save your API Key."
+    }
+
+@app.post("/api/v1/auth/login", tags=["Auth"])
+async def login_user(user: UserAuth):
+    """
+    🔑 Login with username and password to retrieve your API key.
+    """
+    logger.info(f"[Auth] Login attempt for: {user.username}")
+    
+    db_user = get_user_by_username(user.username)
+    if not db_user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    if not verify_password(user.password, db_user["hashed_password"]):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    return {
+        "success": True,
+        "username": db_user["username"],
+        "api_key": db_user["api_key"]
+    }
 
 @app.get("/api/v1/jira/tickets", tags=["Services"])
 async def list_jira_tickets(user: str = Depends(verify_api_key)):

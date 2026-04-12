@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { healthCheck } from '../services/api'
 
-export default function Header() {
+export default function Header({ onLogout }) {
   const [healthy, setHealthy] = useState(false)
 
   useEffect(() => {
@@ -56,17 +56,53 @@ export default function Header() {
         </span>
       </div>
 
-      {/* MCP Badge */}
-      <div style={{
-        background: '#EFF6FF',
-        border: '1px solid #BFDBFE',
-        borderRadius: '20px',
-        padding: '6px 16px',
-        fontSize: '12px',
-        fontWeight: 600,
-        color: 'var(--primary)'
-      }}>
-        4 MCP Connectors Active
+      {/* User Profile & Logout */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+          background: '#EFF6FF',
+          border: '1px solid #BFDBFE',
+          borderRadius: '20px',
+          padding: '6px 16px',
+          fontSize: '12px',
+          fontWeight: 600,
+          color: 'var(--primary)'
+        }}>
+          {localStorage.getItem('username') || 'Authorized User'}
+        </div>
+        <button 
+          onClick={() => {
+            if (onLogout) {
+              onLogout()
+            } else {
+              localStorage.removeItem('apiKey')
+              localStorage.removeItem('username')
+              window.location.reload()
+            }
+          }}
+          style={{
+            background: 'transparent',
+            border: '1px solid var(--border)',
+            padding: '6px 12px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 600,
+            color: 'var(--text-sec)',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = '#FEF2F2';
+            e.target.style.color = 'var(--error)';
+            e.target.style.borderColor = '#FECACA';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'transparent';
+            e.target.style.color = 'var(--text-sec)';
+            e.target.style.borderColor = 'var(--border)';
+          }}
+        >
+          Logout
+        </button>
       </div>
     </header>
   )

@@ -63,7 +63,7 @@ class JiraConnector(BaseConnector):
         List all open Jira tickets.
         """
         logger.info("[Jira] Listing all tickets")
-        result = await self.get("/rest/api/2/issues")
+        result = await self.get("/rest/api/3/issue/search", params={"jql": "project IS NOT EMPTY ORDER BY created DESC", "maxResults": 50})
         return result
 
     def get_tools_schema(self) -> list:
