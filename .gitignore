@@ -28,3 +28,4 @@ Thumbs.db
 # Local runtime data
 *.log
 backend/audit_log.json
+backend/service_account.json

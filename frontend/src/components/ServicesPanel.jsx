@@ -30,10 +30,10 @@ export default function ServicesPanel() {
   }, [])
 
   const TABS = [
-    { id: 'jira', label: '🎫 Jira', count: jiraTickets.length },
-    { id: 'github', label: '🌿 GitHub', count: branches.length },
-    { id: 'slack', label: '💬 Slack', count: messages.length },
-    { id: 'sheets', label: '📊 Sheets', count: Math.max(0, incidents.length - 1) },
+    { id: 'jira', label: '🎫 Jira', count: Array.isArray(jiraTickets) ? jiraTickets.length : 0 },
+    { id: 'github', label: '🌿 GitHub', count: Array.isArray(branches) ? branches.length : 0 },
+    { id: 'slack', label: '💬 Slack', count: Array.isArray(messages) ? messages.length : 0 },
+    { id: 'sheets', label: '📊 Sheets', count: Array.isArray(incidents) ? Math.max(0, incidents.length - 1) : 0 },
   ]
 
   return (
@@ -86,8 +86,8 @@ export default function ServicesPanel() {
         {/* Jira Tickets */}
         {activeTab === 'jira' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {jiraTickets.length === 0
-              ? <div style={{ color: '#475569', fontSize: '13px' }}>No tickets yet</div>
+            {!Array.isArray(jiraTickets) || jiraTickets.length === 0
+              ? <div style={{ color: '#475569', fontSize: '13px' }}>No tickets yet (or backend offline)</div>
               : jiraTickets.map((ticket, i) => (
                 <div key={i} style={{
                   background: 'rgba(255,255,255,0.03)',
@@ -122,7 +122,7 @@ export default function ServicesPanel() {
         {/* GitHub Branches */}
         {activeTab === 'github' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {branches.length === 0
+            {!Array.isArray(branches) || branches.length === 0
               ? <div style={{ color: '#475569', fontSize: '13px' }}>No branches created yet</div>
               : branches.map((branch, i) => (
                 <div key={i} style={{
@@ -157,7 +157,7 @@ export default function ServicesPanel() {
         {/* Slack Messages */}
         {activeTab === 'slack' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {messages.length === 0
+            {!Array.isArray(messages) || messages.length === 0
               ? <div style={{ color: '#475569', fontSize: '13px' }}>No messages yet</div>
               : messages.map((msg, i) => (
                 <div key={i} style={{
@@ -190,7 +190,7 @@ export default function ServicesPanel() {
         {/* Sheets Incidents */}
         {activeTab === 'sheets' && (
           <div>
-            {incidents.length <= 1
+            {!Array.isArray(incidents) || incidents.length <= 1
               ? <div style={{ color: '#475569', fontSize: '13px' }}>No incidents logged yet</div>
               : incidents.slice(1).map((row, i) => (
                 <div key={i} style={{

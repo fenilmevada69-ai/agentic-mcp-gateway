@@ -1,0 +1,5 @@
+# Build and start all services in the background
+docker-compose up --build -d
+
+# To view the logs of all services
+docker-compose logs -f

@@ -60,17 +60,11 @@ services:
       - "8000:8000"
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - JIRA_BASE_URL=http://mock-jira:8001
-      - GITHUB_BASE_URL=http://mock-github:8002
-      - SLACK_BASE_URL=http://mock-slack:8003
-      - SHEETS_BASE_URL=http://mock-sheets:8004
       - REDIS_URL=redis://redis:6379
       - SECRET_KEY=${SECRET_KEY}
+    env_file:
+      - ./.env
     depends_on:
-      - mock-jira
-      - mock-github
-      - mock-slack
-      - mock-sheets
       - redis
     networks:
       - mcp-network

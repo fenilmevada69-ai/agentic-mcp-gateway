@@ -9,8 +9,13 @@ class JiraConnector(BaseConnector):
     """
 
     def __init__(self):
-        base_url = os.getenv("JIRA_BASE_URL", "http://localhost:8001")
-        super().__init__("Jira", base_url)
+        base_url = os.getenv("JIRA_BASE_URL", "https://your-domain.atlassian.net")
+        email = os.getenv("JIRA_EMAIL")
+        api_token = os.getenv("JIRA_API_TOKEN")
+        
+        auth = (email, api_token) if email and api_token else None
+        
+        super().__init__("Jira", base_url, auth=auth)
 
     # ── TOOL 1 ──────────────────────────────────────────────
     async def get_ticket(self, ticket_id: str) -> dict:

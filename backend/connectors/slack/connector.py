@@ -9,8 +9,16 @@ class SlackConnector(BaseConnector):
     """
 
     def __init__(self):
-        base_url = os.getenv("SLACK_BASE_URL", "http://localhost:8003")
-        super().__init__("Slack", base_url)
+        base_url = os.getenv("SLACK_BASE_URL", "https://slack.com")
+        token = os.getenv("SLACK_BOT_TOKEN")
+        
+        headers = {
+            "Content-Type": "application/json; charset=utf-8"
+        }
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+            
+        super().__init__("Slack", base_url, headers=headers)
 
     # ── TOOL 1 ──────────────────────────────────────────────
     async def send_message(self, channel: str, message: str) -> dict:

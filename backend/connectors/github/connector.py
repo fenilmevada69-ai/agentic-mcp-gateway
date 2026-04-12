@@ -9,10 +9,19 @@ class GitHubConnector(BaseConnector):
     """
 
     def __init__(self):
-        base_url = os.getenv("GITHUB_BASE_URL", "http://localhost:8002")
-        super().__init__("GitHub", base_url)
-        self.owner = "mcp-org"
-        self.repo = "main-repo"
+        base_url = os.getenv("GITHUB_BASE_URL", "https://api.github.com")
+        token = os.getenv("GITHUB_TOKEN")
+        
+        headers = {
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"
+        }
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+            
+        super().__init__("GitHub", base_url, headers=headers)
+        self.owner = os.getenv("GITHUB_OWNER", "mcp-org")
+        self.repo = os.getenv("GITHUB_REPO", "main-repo")
 
     # ── TOOL 1 ──────────────────────────────────────────────
     async def create_branch(self, branch_name: str) -> dict:
