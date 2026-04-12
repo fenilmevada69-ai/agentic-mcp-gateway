@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from security.db import get_user_by_api_key
 
 # Password hashing configuration
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # This tells FastAPI to look for X-API-Key in request headers
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)

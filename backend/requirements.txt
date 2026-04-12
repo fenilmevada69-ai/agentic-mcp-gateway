@@ -12,5 +12,5 @@ loguru
 flask
 requests
 google-auth
-passlib
-bcrypt
+passlib[argon2]
+argon2-cffi
